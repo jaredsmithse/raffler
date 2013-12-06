@@ -3,19 +3,20 @@ class Raffler.Views.EntriesIndex extends Backbone.View
 
   events:
     'submit #new_entry': 'createEntry'
+    'click #draw': 'drawWinner'
 
   initialize: ->
-    @collection.on('reset', @render, this)
-    @collection.on('add', @appendEntry, this)
+    @collection.on('reset', @render)
+    @collection.on('add', @appendEntry)
 
-  render: ->
+  render: =>
     $(@el).html(@template())
     @collection.each(@appendEntry)
     this
 
-  appendEntry: (entry) ->
+  appendEntry: (entry) =>
     view = new Raffler.Views.Entry(model: entry)
-    $('#entries').append(view.render().el)
+    @$('#entries').append(view.render().el)
 
   createEntry: (event) ->
     event.preventDefault()
@@ -29,3 +30,7 @@ class Raffler.Views.EntriesIndex extends Backbone.View
         errors = $.parseJSON(response.responseText).errors
         for attribute, messages of errors
             alert "#{attribute} #{message}" for message in messages
+
+  drawWinner: (event) ->
+    event.preventDefault()
+    @collection.drawWinner()
